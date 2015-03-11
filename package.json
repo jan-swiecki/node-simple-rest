@@ -1,0 +1,19 @@
+{
+  "name": "simple-rest",
+  "version": "1.0.0",
+  "description": "Super simple REST API framework",
+  "main": "index.js",
+  "dependencies": {
+    "lodash": "*"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "rest",
+    "api",
+    "simple"
+  ],
+  "author": "Jan Święcki <jan.swiecki@gmail.com>",
+  "license": "MIT"
+}
