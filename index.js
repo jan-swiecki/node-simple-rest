@@ -1,25 +1,58 @@
 _ = require("lodash")
 http = require("http")
 
-var log = function(msg) {
-  console.log("[LOG]", msg);
+function formatDate(date) {
+  var str = date.toISOString().replace(/T/, " ");
+  var ret = str.substring(0,str.length - 2);
+  return "["+ret+"]";
 }
 
-function Processor() {
-  this.handlers = {};
+var log = function(msg) {
+  console.log("[LOG]", formatDate(new Date()), msg);
+}
 
+function UrlMatcher() {
+}
+
+UrlMatcher.prototype.match = function(restPath, requestUrl) {
+  var restPaths = restPath.split("/");
+  var requestUrls = requestUrl.split("/");
+
+  var ok = true;
+  var args = [];
+  restPaths.forEach(function(restPathPart,k) {
+    var requestUrlPart = requestUrls[k];
+    log(requestUrlPart+" <-> "+restPathPart);
+    if(requestUrlPart !== restPathPart) {
+      if(restPathPart[0] === ":") {
+        args.push(requestUrlPart);
+      } else {
+        ok = false;
+        return false;
+      }
+    }
+  });
+
+  return {
+    args: args,
+    ok: ok
+  };
+}
+
+function Processor(urlMatcher) {
+  this.handlers = {};
+  this.urlMatcher = urlMatcher;
 }
 
 Processor.prototype.addHandler = function(handler) {
   handler.method = handler.method.toLowerCase();
 
-  this.handlers[handler.method] = this.handlers[handler.method] || {};
-  //     handlers[handler.method][handler.path] = handlers[handler.method][handler.path] || {};
-  this.handlers[handler.method][handler.path] = handler;
+  this.handlers[handler.method] = this.handlers[handler.method] || [];
+  this.handlers[handler.method].push(handler);
 };
 
 Processor.prototype.process = function(req, res) {
-
+  var self = this;
 
   log("Processing request "+req.method+" "+req.url);
   log("Handlers available "+JSON.stringify(this.handlers));
@@ -30,23 +63,24 @@ Processor.prototype.process = function(req, res) {
     log("FAIL No handlers found for "+req.method);
     return false;
   } else {
-
-    log("OK handlers found for "+req.method);
+    log("OK handlers found for "+req.method+", hs="+JSON.stringify(hs));
 
     var h = hs[req.url];
 
-    if(! h) {
-      log("FAIL No handler found for "+req.url);
-      return false;
-    } else {
-      log("OK handler found for "+req.url);
-      log("Executing handler");
-      var body = h.execute(req, res);
-      if(typeof body !== 'undefined') {
-        res.end(body);
-      }
-    }
+    hs.forEach(function(v) {
+      log("Matching "+v.path+" vs "+req.url);
 
+      var match = self.urlMatcher.match(v.path, req.url);
+
+      if(match.ok) {
+        log("OK handler found for "+req.url);
+        var ret = v.execute(req, res, match.args);
+        if(ret.response) {
+          res.end(ret.response);
+        }
+        return false;
+      }
+    });
   }
 
 }
@@ -56,20 +90,38 @@ function Rest(processor) {
 }
 
 Rest.prototype.get = function(path, callback){
+  log("Registering handler for "+path);
   processor.addHandler({
     method: "get",
     path: path,
-    execute: callback
+    execute: this.getExecutor(callback)
   });
 
   return this;
 };
 
+Rest.prototype.getExecutor = function(callback) {
+  return function(req, res, args) {
+
+    log("Executing callback: "+callback);
+
+    var response = callback.apply(undefined, args);
+
+    var ret = {};
+    if(typeof response !== 'undefined') {
+      ret.response = response;
+    }
+
+    return ret;
+  }
+}
+
 Rest.prototype.process = function(req, res) {
   return this.processor.process(req,res);
 }
 
-var processor = new Processor();
+var urlMatcher = new UrlMatcher();
+var processor = new Processor(urlMatcher);
 var rest = new Rest(processor);
 
 module.exports = rest;
