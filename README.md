@@ -30,7 +30,7 @@ rest
 
   // automatic setting Content-Type via function name
   .get("/pdf", function asApplicationPdf() {
-  return {msg: "return as application/pdf"};
+    return {msg: "return as application/pdf"};
   })
 
   // POST
