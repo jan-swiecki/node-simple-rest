@@ -137,16 +137,23 @@ function Rest(processor) {
   this.processor = processor;
 }
 
-Rest.prototype.get = function(path, callback){
-  log("Registering handler for "+path);
-  processor.addHandler({
-    method: "get",
-    path: path,
-    execute: this.getExecutor(callback)
-  });
+Rest.prototype.handlerFactory = function(method) {
+  return function(path, callback){
+    log("Registering handler for "+path);
+    processor.addHandler({
+      method: method,
+      path: path,
+      execute: this.getExecutor(callback)
+    });
 
-  return this;
-};
+    return this;
+  };
+}
+
+Rest.prototype.get = Rest.prototype.handlerFactory("get");
+Rest.prototype.post = Rest.prototype.handlerFactory("post");
+Rest.prototype.delete = Rest.prototype.handlerFactory("delete");
+Rest.prototype.put = Rest.prototype.handlerFactory("put");
 
 Rest.prototype.getExecutor = function(callback) {
   var self = this;
@@ -154,25 +161,35 @@ Rest.prototype.getExecutor = function(callback) {
 
     log("Executing callback: "+callback);
 
-    var response = self.executeInject(callback, args);
+    var result = self.executeInject(callback, args);
+    var response = result.response;
+    var contentType = result.contentType;
 
     var ret = {};
     if(typeof response !== 'undefined') {
       if(_.isObject(response)) {
         ret.response = JSON.stringify(response);
+        contentType = contentType || "application/json";
       } else {
         ret.response = response;
+        contentType = contentType || "text/plain";
       }
     }
+
+    res.writeHead(200, {
+      "Content-Type": contentType
+    });
 
     return ret;
   }
 }
 
 Rest.prototype.executeInject = function(callback, args) {
-
   if(_.isArray(args)) {
-    return callback.apply(undefined, args);
+    return {
+      response: callback.apply(undefined, args),
+      contentType: null
+    }
   } else if(_.isPlainObject(args)) {
 
     var parsedCallback = esprima.parse("("+callback+")");
@@ -185,12 +202,38 @@ Rest.prototype.executeInject = function(callback, args) {
 
     log("arrayArgs = "+arrayArgs);
 
-    return callback.apply(undefined,arrayArgs);
+    var contentType = this.callbackNameToContentType(parsedCallback.body[0].expression.id);
+
+    return {
+      response: callback.apply(undefined,arrayArgs),
+      contentType: contentType
+    };
 
   } else {
     throw "Unprocessable type of args: "+args;
   }
+}
 
+Rest.prototype.callbackNameToContentType = function(callbackIdentifier) {
+  if(! callbackIdentifier) {
+    return null;
+  } else {
+    var name = callbackIdentifier.name;
+
+    if(name.match(/^as/)) {
+
+      name = name.substring(2, name.length);
+      name = name[0].toLowerCase() + name.substring(1, name.length);
+      name = name.replace(/([A-Z])/g, function(match, x) {
+        return "/"+x.toLowerCase();
+      });
+
+      return name;
+    } else {
+      return null;
+    }
+
+  }
 }
 
 Rest.prototype.process = function(req, res) {

@@ -1,15 +1,30 @@
 rest = require("./index.js");
 
+// Example
+// If you return string response gets Content-Type: text/plain automatically.
 rest.get("/test", function() {
-  return "yeah1!";
+  return "return text/plain string";
 });
 
-rest.get("/test/:myVar1", function(myVar1, myVar2, myVar3) {
-  console.log("!!! myVar =", myVar1);
-  return "myVar = "+myVar1;
+// Automatic variable name mapping
+// e.g. /test/a/b will put "a" in myVar2, and "b" in myVar1
+rest.get("/test/:myVar2/:myVar1", function(myVar1, myVar2, myVar3) {
+  return "Variable name injection";
 });
 
-rest.get("/test/:myVar1/:myVar2", function(myVar1, myVar2, myVar3) {
-  console.log("!!! myVar =", myVar1, myVar2);
-  return ":)";
-});
+// chaining
+rest
+  // if you return simple object response
+  // has Content-Type: application/json automatically
+  .get("/object", function () {
+    return {msg: "return as application/json"};
+  })
+
+  // automatic setting Content-Type via function name
+  .get("/pdf", function asApplicationPdf() {
+    return {msg: "return as application/pdf"};
+  })
+  // POST
+  .post("/post", function asNonExistent() {
+    return "why";
+  });
