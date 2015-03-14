@@ -1,5 +1,6 @@
 _ = require("lodash")
 http = require("http")
+esprima = require("esprima");
 
 function formatDate(date) {
   var str = date.toISOString().replace(/T/, " ");
@@ -14,9 +15,56 @@ var log = function(msg) {
 function UrlMatcher() {
 }
 
-UrlMatcher.prototype.match = function(restPath, requestUrl) {
+function NameUrlMatcher() {
+}
+
+NameUrlMatcher.prototype.match = function(restPath, requestUrl) {
   var restPaths = restPath.split("/");
   var requestUrls = requestUrl.split("/");
+
+  if(restPaths.length !== requestUrls.length) {
+    return {
+      ok: false,
+      args: []
+    };
+  }
+
+  var ok = true;
+  var args = {};
+  restPaths.forEach(function(restPathPart,k) {
+    var requestUrlPart = requestUrls[k];
+    log(requestUrlPart+" <-> "+restPathPart);
+    if(requestUrlPart !== restPathPart) {
+      if(restPathPart[0] === ":") {
+        args[restPathPart.substring(1, restPathPart.length)] = requestUrlPart;
+      } else {
+        ok = false;
+        return false;
+      }
+    }
+  });
+
+  return {
+    args: args,
+    ok: ok
+  };
+}
+
+
+
+function LinearUrlMatcher() {
+}
+
+LinearUrlMatcher.prototype.match = function(restPath, requestUrl) {
+  var restPaths = restPath.split("/");
+  var requestUrls = requestUrl.split("/");
+
+  if(restPaths.length !== requestUrls.length) {
+    return {
+      ok: false,
+      args: []
+    };
+  }
 
   var ok = true;
   var args = [];
@@ -101,26 +149,55 @@ Rest.prototype.get = function(path, callback){
 };
 
 Rest.prototype.getExecutor = function(callback) {
+  var self = this;
   return function(req, res, args) {
 
     log("Executing callback: "+callback);
 
-    var response = callback.apply(undefined, args);
+    var response = self.executeInject(callback, args);
 
     var ret = {};
     if(typeof response !== 'undefined') {
-      ret.response = response;
+      if(_.isObject(response)) {
+        ret.response = JSON.stringify(response);
+      } else {
+        ret.response = response;
+      }
     }
 
     return ret;
   }
 }
 
+Rest.prototype.executeInject = function(callback, args) {
+
+  if(_.isArray(args)) {
+    return callback.apply(undefined, args);
+  } else if(_.isPlainObject(args)) {
+
+    var parsedCallback = esprima.parse("("+callback+")");
+    var callbackParamNames = parsedCallback.body[0].expression.params.map(function(v) { return v.name; });
+
+    var arrayArgs = [];
+    _(callbackParamNames).forEach(function(paramName,key) {
+      arrayArgs.push(args[paramName]);
+    }).value();
+
+    log("arrayArgs = "+arrayArgs);
+
+    return callback.apply(undefined,arrayArgs);
+
+  } else {
+    throw "Unprocessable type of args: "+args;
+  }
+
+}
+
 Rest.prototype.process = function(req, res) {
   return this.processor.process(req,res);
 }
 
-var urlMatcher = new UrlMatcher();
+var urlMatcher = new NameUrlMatcher();
 var processor = new Processor(urlMatcher);
 var rest = new Rest(processor);
 
