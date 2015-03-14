@@ -3,6 +3,10 @@
   "version": "1.0.4",
   "description": "Super simple REST API framework",
   "main": "index.js",
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/jan-swiecki/node-simple-rest"
+  },
   "dependencies": {
     "lodash": "*",
     "esprima": "*"

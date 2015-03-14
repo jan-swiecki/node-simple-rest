@@ -3,27 +3,33 @@ Simple REST
 
 Prototype of simple REST framework.
 
-Usage:
+Installation
+------------
+
+
+
+Usage
+-----
 
 ```javascript
 rest = require("./index.js");
 
 // Example
-// If you return string response gets Content-Type: text/plain automatically.
+// If you return response as string then response will have Content-Type: text/plain automatically.
 rest.get("/test", function() {
   return "return text/plain string";
 });
 
 // Automatic variable name mapping
-// e.g. /test/a/b will put "a" in myVar2, and "b" in myVar1
+// e.g. requesting /test/a/b will make myVar1 = "b", myVar2 = "a"
 rest.get("/test/:myVar2/:myVar1", function(myVar1, myVar2, myVar3) {
   return "Variable name injection";
 });
 
 // chaining
 rest
-  // if you return simple object response
-  // has Content-Type: application/json automatically
+  // if you return simple object then the response
+  // will have Content-Type: application/json automatically
   .get("/object", function () {
     return {msg: "return as application/json"};
   })
