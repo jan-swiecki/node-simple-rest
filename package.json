@@ -1,11 +1,11 @@
 {
   "name": "simple-rest",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Super simple REST API framework",
   "main": "index.js",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/jan-swiecki/node-simple-rest"
+    "type": "git",
+    "url": "https://github.com/jan-swiecki/node-simple-rest"
   },
   "dependencies": {
     "lodash": "*",
