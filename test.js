@@ -1,6 +1,6 @@
 rest = require("./index.js");
 
-log = require("./lib/Helper.js").getLogger();
+var log = require("./lib/SimpleLogger.js").getLogger();
 
 // Example
 // If you return string response gets Content-Type: text/plain automatically.
