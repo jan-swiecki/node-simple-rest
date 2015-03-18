@@ -34,8 +34,6 @@ rest
   // file download support
   .get("/file", function(File) {
 
-    log(File);
-
-    return "test";
+    return "test: "+File.awesome;
 
   });
