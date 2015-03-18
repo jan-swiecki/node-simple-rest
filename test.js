@@ -1,5 +1,7 @@
 rest = require("./index.js");
 
+log = require("./lib/Helper.js").getLogger();
+
 // Example
 // If you return string response gets Content-Type: text/plain automatically.
 rest.get("/test", function() {
@@ -27,4 +29,13 @@ rest
   // POST
   .post("/post", function asNonExistent() {
     return "why"; // Content-Type: non-existent
+  })
+
+  // file download support
+  .get("/file", function(File) {
+
+    log(File);
+
+    return "test";
+
   });

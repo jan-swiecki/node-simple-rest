@@ -1,10 +1,10 @@
 _ = require("lodash")
 http = require("http")
-esprima = require("esprima");
 
 NameUrlMatcher = require("./lib/NameUrlMatcher.js");
 Processor = require("./lib/Processor.js");
 Rest = require("./lib/Rest.js");
+Injector = require("./lib/Injector.js");
 
 var log = function(msg) {
   console.log("[INDEX]", formatDate(new Date()), msg);
@@ -12,7 +12,8 @@ var log = function(msg) {
 
 var urlMatcher = new NameUrlMatcher();
 var processor = new Processor(urlMatcher);
-var rest = new Rest(processor);
+var injector = new Injector();
+var rest = new Rest(processor, injector);
 
 module.exports = rest;
 
