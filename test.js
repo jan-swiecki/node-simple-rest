@@ -6,15 +6,15 @@ rest.get("/test", function() {
   return "return text/plain string";
 });
 
-// Automatic variable name mapping
-// e.g. /test/a/b will put "a" in myVar2, and "b" in myVar1
-rest.get("/test/:myVar2/:myVar1", function(myVar1, myVar2, myVar3) {
-  return "Variable name injection";
+// Automatic variable name mapping (order of arguments in function doesn't matter)
+// e.g. /user/1/name --> 1, name
+rest.get("/user/:userId/:userProperty", function(userProperty, userId) {
+  return userId+", "+userProperty;
 });
 
 // chaining
 rest
-  // if you return simple object response
+  // if you return simple object then the response
   // has Content-Type: application/json automatically
   .get("/object", function () {
     return {msg: "return as application/json"};
@@ -26,5 +26,5 @@ rest
   })
   // POST
   .post("/post", function asNonExistent() {
-    return "why";
+    return "why"; // Content-Type: non-existent
   });
