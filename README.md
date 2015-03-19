@@ -12,7 +12,7 @@ Usage
 -----
 
 ```javascript
-rest = require("./index.js");
+rest = require("simple-rest");
 
 var log = require("./lib/SimpleLogger.js").getLogger();
 
