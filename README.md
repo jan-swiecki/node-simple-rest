@@ -14,8 +14,6 @@ Usage
 ```javascript
 rest = require("simple-rest");
 
-var log = require("./lib/SimpleLogger.js").getLogger();
-
 // Example
 // If you return string response gets Content-Type: text/plain automatically.
 rest.get("/test", function() {
@@ -70,7 +68,7 @@ rest
     fs.exists(name, function(exists) {
 
       setTimeout(function(){
-        log("Unlink "+name);
+        console.log("Unlink "+name);
         if(! exists) {
           Async(404);
         } else {
