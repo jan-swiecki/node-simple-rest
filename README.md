@@ -14,22 +14,24 @@ Usage
 ```javascript
 rest = require("./index.js");
 
+var log = require("./lib/SimpleLogger.js").getLogger();
+
 // Example
-// If you return response as string then response will have Content-Type: text/plain automatically.
+// If you return string response gets Content-Type: text/plain automatically.
 rest.get("/test", function() {
   return "return text/plain string";
 });
 
-// Automatic variable name mapping
-// e.g. requesting /test/a/b will make myVar1 = "b", myVar2 = "a"
-rest.get("/test/:myVar2/:myVar1", function(myVar1, myVar2, myVar3) {
-  return "Variable name injection";
+// Automatic variable name mapping (order of arguments in function doesn't matter)
+// e.g. /user/1/name --> 1, name
+rest.get("/user/:userId/:userProperty", function(userProperty, userId) {
+  return userId+", "+userProperty;
 });
 
 // chaining
 rest
   // if you return simple object then the response
-  // will have Content-Type: application/json automatically
+  // has Content-Type: application/json automatically
   .get("/object", function () {
     return {msg: "return as application/json"};
   })
@@ -38,9 +40,45 @@ rest
   .get("/pdf", function asApplicationPdf() {
     return {msg: "return as application/pdf"};
   })
-
   // POST
   .post("/post", function asNonExistent() {
-    return "why";
+    return "why"; // Content-Type: non-existent
+  })
+
+  // file download? no problem!
+  .get("/file", function(File) {
+
+    return File("package.json");
+
+  })
+
+  // auto-wire core module? not a problem!
+  .delete("/file/:name", function returnsStatusCode(fs, name) {
+    if(! fs.existsSync(name)) {
+      return 404;
+    } else {
+      fs.unlinkSync(name);
+      return 200;
+    }
+  })
+
+  // asynchronous version of above
+  // Note: if Async is injected then framework automatically assumes
+  //       asynchronous callback will be called and ignores return
+  //       value of handler.
+  .delete("/fileAsync/:name", function returnsStatusCode(fs, name, Async) {
+    fs.exists(name, function(exists) {
+
+      setTimeout(function(){
+        log("Unlink "+name);
+        if(! exists) {
+          Async(404);
+        } else {
+          fs.unlinkSync(name);
+          Async(200);
+        }
+      }, 1000);
+
+    });
   });
 ```
