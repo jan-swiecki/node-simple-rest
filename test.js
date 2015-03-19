@@ -31,9 +31,21 @@ rest
     return "why"; // Content-Type: non-existent
   })
 
-  // file download support
+  // file download? no problem!
   .get("/file", function(File) {
 
     return File("package.json");
 
+  })
+
+  // auto-wire core module? not a problem!
+  .delete("/file/:name", function returnsStatusCode(fs, name) {
+    if(! fs.existsSync(name)) {
+      return 404;
+    } else {
+      fs.unlinkSync(name);
+      return 200;
+    }
   });
+
+
