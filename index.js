@@ -1,7 +1,8 @@
 _ = require("lodash")
 http = require("http")
 
-require("./lib/SimpleLogger.js").noDate();
+// require("./lib/SimpleLogger.js").noDate();
+require("./lib/SimpleLogger.js");
 
 var log = require("./lib/SimpleLogger.js").getLogger();
 

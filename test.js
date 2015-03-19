@@ -38,14 +38,25 @@ rest
 
   })
 
-  // auto-wire core module? not a problem!
+  // auto-wire core modules? not a problem!
+  // Note: function name returnsStatusCode makes return value a statusCode of response
   .delete("/file/:name", function returnsStatusCode(fs, name) {
     if(! fs.existsSync(name)) {
-      return 404;
+      return 404; // 404 Not Found
     } else {
       fs.unlinkSync(name);
-      return 200;
+      return 200; // 200 OK
     }
+  })
+
+  // combine two function name functionalities
+  .get("/combine", function returnsStatusCodeAsApplicationJson(fs, name) {
+    return 401;
+  })
+
+
+  .delete("/file_smart/:name", function returnsStatusCode(fs, name) {
+
   });
 
 
