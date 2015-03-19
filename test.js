@@ -34,6 +34,6 @@ rest
   // file download support
   .get("/file", function(File) {
 
-    return "test: "+File.awesome;
+    return File("package.json");
 
   });

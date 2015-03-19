@@ -20,6 +20,7 @@ module.exports = rest;
 http.createServer(function(req,res){
 
   if(! rest.process(req,res)) {
+    log("--> 404");
     res.writeHead(404);
     res.end("404 Not Found");
   }
