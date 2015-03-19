@@ -46,6 +46,26 @@ rest
       fs.unlinkSync(name);
       return 200;
     }
+  })
+
+  // asynchronous version of above
+  // Note: if Async is injected then framework automatically assumes
+  //       asynchronous callback will be called and ignores return
+  //       value of handler.
+  .delete("/fileAsync/:name", function returnsStatusCode(fs, name, Async) {
+    fs.exists(name, function(exists) {
+
+      setTimeout(function(){
+        log("Unlink "+name);
+        if(! exists) {
+          Async(404);
+        } else {
+          fs.unlinkSync(name);
+          Async(200);
+        }
+      }, 1000);
+
+    });
   });
 
 
