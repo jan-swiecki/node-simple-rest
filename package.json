@@ -10,7 +10,8 @@
   "dependencies": {
     "lodash": "*",
     "esprima": "*",
-    "stack-trace": "*"
+    "stack-trace": "*",
+    "mime": "*"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
