@@ -1,12 +1,12 @@
 Simple REST
 ===========
 
-Prototype of simple REST framework.
+Simple REST framework.
 
 Installation
 ------------
 
-
+    npm install simple-rest
 
 Usage
 -----
