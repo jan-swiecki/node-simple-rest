@@ -25,6 +25,7 @@ require("./index.js").then(function(rest){
       .get("/pdf", function asApplicationPdf() {
         return {msg: "return as application/pdf"};
       })
+
       // POST
       .post("/post", function asNonExistent() {
         return "why"; // Content-Type: non-existent
