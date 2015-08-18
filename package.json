@@ -1,6 +1,6 @@
 {
   "name": "simple-rest",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "description": "Super simple REST API framework",
   "main": "index.js",
   "repository": {
