@@ -78,7 +78,7 @@ require("./index.js").then(function(rest){
             setTimeout(function(){
               log("Unlink "+name);
               if(! exists) {
-                reject(404);
+                resolve(404);
               } else {
                 fs.unlinkSync(name);
                 resolve(200);
