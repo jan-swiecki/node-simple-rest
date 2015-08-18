@@ -52,7 +52,7 @@ require("./index.js").then(function(rest){
       // Note: if Async is injected then framework automatically assumes
       //       asynchronous callback will be called and ignores return
       //       value of handler.
-      .delete("/fileAsync/:name", function returnsStatusCode(fs, name, Async) {
+      .delete("/fileAsyncOld/:name", function returnsStatusCode(fs, name, Async) {
         fs.exists(name, function(exists) {
 
           setTimeout(function(){
