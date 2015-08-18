@@ -1,4 +1,4 @@
-var Autowire = require("./node-autowire");
+var Autowire = require("autowire");
 var Promise = require("bluebird");
 
 module.exports = Autowire(function(http, lodash, SimpleLogger, NameUrlMatcher, RequestRouter, Rest){
