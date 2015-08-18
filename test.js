@@ -1,6 +1,8 @@
 require("./index.js").then(function(rest){
   var log = require("./lib/SimpleLogger.js").getLogger();
 
+  rest.port(8080);
+
   // Example
   // If you return string response gets Content-Type: text/plain automatically.
   rest.get("/test", function() {

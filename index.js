@@ -13,7 +13,10 @@ module.exports = Autowire(function(http, lodash, SimpleLogger, NameUrlMatcher, R
   var injector = new Injector();
   var rest = new Rest(requestRouter, injector);
 
-  http.createServer(rest.getServerHandler()).listen(3000);
+  //var server = http.createServer(rest.getServerHandler()).listen(3000);
+
+  rest.setServer(http.createServer(rest.getServerHandler()));
+  //rest.start();
 
   return rest;
 });
