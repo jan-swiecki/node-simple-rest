@@ -8,7 +8,7 @@
     "url": "https://github.com/jan-swiecki/node-simple-rest"
   },
   "dependencies": {
-    "autowire": "*",
+    "autowire": ">=2.0.0-alpha",
     "bluebird": "^2.9.34",
     "esprima": "2.1.*",
     "jquery-deferred": "0.3.*",
