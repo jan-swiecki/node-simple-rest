@@ -1,29 +1,19 @@
-_ = require("lodash")
-http = require("http")
+var Autowire = require("./node-autowire");
+var Promise = require("bluebird");
 
-require("./lib/SimpleLogger.js").noDate();
+module.exports = Autowire(function(http, lodash, SimpleLogger, NameUrlMatcher, RequestRouter, Rest){
+  var log = SimpleLogger.getLogger();
 
-var log = require("./lib/SimpleLogger.js").getLogger();
+  var _ = lodash;
 
-NameUrlMatcher = require("./lib/NameUrlMatcher.js");
-Processor = require("./lib/Processor.js");
-Rest = require("./lib/Rest.js");
-Injector = require("./lib/Injector.js");
+  var Injector = Autowire.Injector;
 
-var urlMatcher = new NameUrlMatcher();
-var processor = new Processor(urlMatcher);
-var injector = new Injector();
-var rest = new Rest(processor, injector);
+  var urlMatcher = new NameUrlMatcher();
+  var requestRouter = new RequestRouter(urlMatcher);
+  var injector = new Injector();
+  var rest = new Rest(requestRouter, injector);
 
-module.exports = rest;
+  http.createServer(rest.getServerHandler()).listen(3000);
 
-http.createServer(function(req,res){
-
-  rest.process(req,res, function(result){
-    if(! result) {
-      res.writeHead(404);
-      res.end("404 Not Found");
-    }
-  });
-
-}).listen(3000);
+  return rest;
+});
