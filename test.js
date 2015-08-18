@@ -32,9 +32,7 @@ require("./index.js").then(function(rest){
 
       // file download? no problem!
       .get("/file", function(File) {
-
         return File("package.json");
-
       })
 
       // auto-wire core module? not a problem!
