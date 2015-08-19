@@ -3,6 +3,8 @@ Simple REST
 
 Simple REST framework.
 
+This is alpha version, API may change drastically with major versions. Performance is probably bad.
+
 Installation
 ------------
 

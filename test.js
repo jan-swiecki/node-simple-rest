@@ -19,7 +19,7 @@ require("./index.js").then(function(rest){
   rest
       // if you return simple object then the response
       // has Content-Type: application/json automatically
-      .get("/object", function () {
+      .get("/object", function() {
         return {msg: "return as application/json"};
       })
 
