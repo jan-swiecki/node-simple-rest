@@ -1,4 +1,11 @@
-var Autowire = require("./node-autowire");
+var Autowire;
+
+if(process.env.LOCAL_DEV) {
+  Autowire = require("./node-autowire");
+} else {
+  Autowire = require("autowire");
+}
+
 var Promise = require("bluebird");
 
 module.exports = Autowire(function(http, lodash, SimpleLogger, NameUrlMatcher, RequestRouter, Rest){
