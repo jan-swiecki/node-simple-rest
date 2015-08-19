@@ -1,4 +1,4 @@
-var Autowire = require("autowire");
+var Autowire = require("./node-autowire");
 var Promise = require("bluebird");
 
 module.exports = Autowire(function(http, lodash, SimpleLogger, NameUrlMatcher, RequestRouter, Rest){
@@ -8,9 +8,12 @@ module.exports = Autowire(function(http, lodash, SimpleLogger, NameUrlMatcher, R
 
   var Injector = Autowire.Injector;
 
+  var codeMutator = new Autowire.CodeMutator();
+  var moduleFinder = new Autowire.ModuleFinder();
+  var injector = new Injector(moduleFinder, codeMutator);
+
   var urlMatcher = new NameUrlMatcher();
   var requestRouter = new RequestRouter(urlMatcher);
-  var injector = new Injector();
   var rest = new Rest(requestRouter, injector);
 
   //var server = http.createServer(rest.getServerHandler()).listen(3000);

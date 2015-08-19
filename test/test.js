@@ -1,5 +1,5 @@
 var assert = require("assert");
-var RestPromise = require("../index.js");
+var rest = require("../index.js");
 var request = require("supertest");
 var Promise = require("bluebird");
 
@@ -36,16 +36,16 @@ describe('Array', function() {
 
 
 describe('REST server', function(){
-	var rest;
+	//var Rest;
 	before(function(done){
-		RestPromise.then(function(r){
-			rest = r;
-			//rest.injector.importPaths.push("../lib/");
-			rest.port(PORT);
-			rest.start();
-			registerEndpoints(rest);
-			done();
-		})
+		//RestPromise.then(function(r){
+		//	rest = r;
+		//rest.injector.importPaths.push("../lib/");
+		rest.port(PORT);
+		rest.start();
+		registerEndpoints(rest);
+		done();
+		//})
 	});
 
 	after(function(){
