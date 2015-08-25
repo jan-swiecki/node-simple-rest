@@ -6,18 +6,13 @@ if(process.env.LOCAL_DEV) {
   Autowire = require("autowire");
 }
 
-var Promise = require("bluebird");
+Autowire.alias("Promise", "bluebird");
+Autowire.alias("_", "lodash");
 
-module.exports = Autowire(function(http, lodash, SimpleLogger, NameUrlMatcher, RequestRouter, Rest){
+module.exports = Autowire(function(http, _, SimpleLogger, NameUrlMatcher, RequestRouter, Rest){
   var log = SimpleLogger.getLogger();
 
-  var _ = lodash;
-
-  var Injector = Autowire.Injector;
-
-  var codeMutator = new Autowire.CodeMutator();
-  var moduleFinder = new Autowire.ModuleFinder();
-  var injector = new Injector(moduleFinder, codeMutator);
+  var injector = Autowire.getNewDependencies().injector;
 
   var urlMatcher = new NameUrlMatcher();
   var requestRouter = new RequestRouter(urlMatcher);
