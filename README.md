@@ -63,22 +63,22 @@ rest
   })
 
   // asynchronous version of above
-  // Note: if Async is injected then framework automatically assumes
-  //       asynchronous callback will be called and ignores return
-  //       value of handler.
-  .delete("/fileAsync/:name", function returnsStatusCode(fs, name, Async) {
-    fs.exists(name, function(exists) {
+  // Note: if Promise is returned then framework automatically assumes
+  //       asynchronous result and unpacks promise asynchronously.
+  .delete("/fileAsync/:name", function returnsStatusCode(fs, name) {
+    return new Promise(function(resolve, reject){
+      fs.exists(name, function(exists) {
 
-      setTimeout(function(){
-        console.log("Unlink "+name);
-        if(! exists) {
-          Async(404);
-        } else {
-          fs.unlinkSync(name);
-          Async(200);
-        }
-      }, 1000);
+        setTimeout(function(){
+          if(! exists) {
+              resolve(404);
+          } else {
+              fs.unlinkSync(name);
+              resolve(200);
+          }
+        }, 1000);
 
+      });
     });
   });
 ```

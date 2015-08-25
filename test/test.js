@@ -169,9 +169,8 @@ function registerEndpoints(rest){
 		})
 
 		// asynchronous version of above
-		// Note: if Async is injected then framework automatically assumes
-		//       asynchronous callback will be called and ignores return
-		//       value of handler.
+		// Note: if Promise is returned then framework automatically assumes
+		//       asynchronous result and unpacks promise asynchronously.
 		.delete("/fileAsync/:name", function returnsStatusCode(fs, name) {
 			return new Promise(function(resolve, reject){
 				fs.exists(name, function(exists) {
@@ -189,4 +188,4 @@ function registerEndpoints(rest){
 				});
 			});
 		});
-};
+}
