@@ -9,7 +9,6 @@
   },
   "dependencies": {
     "autowire": "^2.1.0",
-    "bluebird": "^2.9.34",
     "esprima": "2.1.*",
     "jquery-deferred": "0.3.*",
     "lodash": "^4.17.11",

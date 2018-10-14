@@ -1,7 +1,6 @@
 var assert = require("assert");
 var rest = require("../index.js");
 var request = require("supertest");
-var Promise = require("bluebird");
 
 var fs = Promise.promisifyAll(require("fs"));
 
