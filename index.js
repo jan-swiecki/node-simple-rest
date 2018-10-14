@@ -1,10 +1,4 @@
-var Autowire;
-
-if(process.env.LOCAL_DEV) {
-  Autowire = require("./node-autowire");
-} else {
-  Autowire = require("autowire");
-}
+const Autowire = require("autowire");
 
 Autowire.alias("Promise", "bluebird");
 Autowire.alias("_", "lodash");
@@ -12,7 +6,7 @@ Autowire.alias("_", "lodash");
 module.exports = Autowire(function(http, _, SimpleLogger, NameUrlMatcher, RequestRouter, Rest){
   var log = SimpleLogger.getLogger();
 
-  var injector = Autowire.getNewDependencies().injector;
+  var injector = Autowire.getInjector();
 
   var urlMatcher = new NameUrlMatcher();
   var requestRouter = new RequestRouter(urlMatcher);

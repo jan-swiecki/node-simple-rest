@@ -89,4 +89,8 @@ rest
 
       });
     });
-  });
+  })
+  .get("/user/:userId/:userProperty", function(userProperty, userId) {
+		return userId+", "+userProperty;
+	});
+

@@ -2,8 +2,6 @@ var assert = require("assert");
 var rest = require("../index.js");
 var request = require("supertest");
 
-var fs = Promise.promisifyAll(require("fs"));
-
 var PORT = 3030;
 var HOST = "localhost";
 var SERVER_URL = "http://"+HOST+":"+PORT;
