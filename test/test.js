@@ -1,6 +1,7 @@
 var assert = require("assert");
 var rest = require("../index.js");
 var request = require("supertest");
+var util = require('util');
 
 var PORT = 3030;
 var HOST = "localhost";
@@ -55,6 +56,30 @@ describe('REST server', function(){
 				.get('/test')
 				.expect('Content-Type', 'text/plain')
 				.expect(200, 'return text/plain string', done);
+		});
+	});
+
+	describe('GET /not-found', function(){
+		it('respond with 404 status code', function(done){
+			request(rest.server)
+				.get('/not-found')
+				.expect(404, done);
+		});
+	});
+
+	describe('GET /not-found2', function(){
+		it('respond with 404 status code', function(done){
+			request(rest.server)
+				.get('/not-found2')
+				.expect(404, done);
+		});
+	});
+
+	describe('GET /not-found3', function(){
+		it('respond with 404 status code', function(done){
+			request(rest.server)
+				.get('/not-found3')
+				.expect(404, done);
 		});
 	});
 
@@ -118,6 +143,16 @@ describe('REST server', function(){
 	});
 });
 
+// prepare error
+function TestNotFoundError(message, extra) {
+	Error.captureStackTrace(this, this.constructor);
+	this.name = this.constructor.name;
+	this.message = message;
+	this.extra = extra;
+};
+
+util.inherits(TestNotFoundError, Error);
+
 function registerEndpoints(rest){
 
 	// Example
@@ -134,6 +169,12 @@ function registerEndpoints(rest){
 
 	// chaining
 	rest
+		// map TestNotFoundError error for 404 status
+		.remapErrors(() => {
+			return {
+				TestNotFoundError: {status: 404, clazz: TestNotFoundError}
+			}
+		})
 		// if you return simple object then the response
 		// has Content-Type: application/json automatically
 		.get("/object", function () {
@@ -143,6 +184,16 @@ function registerEndpoints(rest){
 		// automatic setting Content-Type via function name
 		.get("/pdf", function asApplicationPdf() {
 			return {msg: "return as application/pdf"};
+		})
+
+		// setting 404 status code
+		.get("/not-found2", function returnsStatusCode() {
+			return 404;
+		})
+
+		// throwing error with 404 status code
+		.get("/not-found3", function() {
+			throw new TestNotFoundError("Not found");
 		})
 
 		// POST

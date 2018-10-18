@@ -9,6 +9,8 @@
   },
   "dependencies": {
     "autowire": "^2.1.0",
+    "body-parser": "^1.18.3",
+    "cookie-parser": "^1.4.3",
     "esprima": "2.1.*",
     "jquery-deferred": "0.3.*",
     "lodash": "^4.17.11",
